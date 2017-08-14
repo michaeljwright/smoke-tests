@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-control" content="public">
+    <meta http-equiv="expires" content="604800">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smoke Tests - Landing page</title>
+	<meta name="Description" content="">
+    <meta name="Keywords" content="">
+    <meta name="distribution" content="Global">
+</head>
+
+<body>
+
+	<section class="hero">
+		<h1>Smoke Tests Demo</h1>
+        <h3>Test and Optimize your Startup Ideas</h3>
+        <div class="big-bottom"></div>
+        <h3 class="title">Sign up here to know when we launch</h3>
+    		<hr>
+        <div class="signup">
+            <p id="signup-success" class="text-success"></p>
+            <p id="signup-error" class="text-danger"></p>
+            <form class="signup-form form-inline" id="signup-form" role="form" onsubmit="return signup(this)">
+                <input id="email" class="form-control" name="email" type="email" placeholder="enter your email here" required>
+                <button class="btn btn-success" id="signup-button" type="submit" >Click here to register your interest</button>
+            </form>
+        </div>
+	</section>
+
+	<footer>
+        <p>&copy;2017. All rights reserved.</p>
+	</footer>
+
+  <noscript id="deferred-styles">
+      <link rel="stylesheet" href="assets/css/styles.css"/>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:800">
+  </noscript>
+  <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-database.js"></script>
+  <script>
+    var loadDeferredStyles = function() {
+      var addStylesNode = document.getElementById("deferred-styles");
+      var replacement = document.createElement("div");
+      replacement.innerHTML = addStylesNode.textContent;
+      document.body.appendChild(replacement)
+      addStylesNode.parentElement.removeChild(addStylesNode);
+    };
+    var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+        webkitRequestAnimationFrame || msRequestAnimationFrame;
+    if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+    else window.addEventListener('load', loadDeferredStyles);
+
+    var config = {
+      apiKey: "AIzaSyCeE0EWQhN9gXl8BxjnfjtnicvE6y49Q7w",
+      authDomain: "smoke-tests-3e728.firebaseapp.com",
+      databaseURL: "https://smoke-tests-3e728.firebaseio.com/",
+    };
+    firebase.initializeApp(config);
+
+    var database = firebase.database();
+
+    var signupForm = document.getElementById('signup-form');
+    var signupSuccess = document.getElementById('signup-success');
+    var signupError = document.getElementById('signup-error');
+    var signupBtn = document.getElementById('signup-button');
+    var onSignupComplete = function(error) {
+      signupBtn.disabled = false;
+      if (error) {
+        signupError.innerHTML = 'Sorry. Something happened so we could not register your interest.';
+      } else {
+        signupSuccess.innerHTML = 'Thanks for registering your interest! We will send you an email as soon as we launch.';
+        // hide the form
+        signupForm.style.display = 'none';
+      }
+    };
+    function signup(formObj) {
+        firebase.database().ref('signups/').push({
+          email: formObj.email.value
+        }, onSignupComplete);
+
+        signupBtn.disabled = true;
+        return false;
+    }
+    /*var signupsRef = database.ref('signups');
+    signupsRef.on('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var childData = childSnapshot.val().email;
+          signupSuccess.innerHTML += childData + "<br />";
+        });
+    });*/
+  </script>
+
+</body>
+
+</html>

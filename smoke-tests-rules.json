@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "signups": {
+      // /signups is not readable by the world
+      ".read": false,
+
+      // /signups is writable by the world
+      ".write": true
+    }
+  }
+}
