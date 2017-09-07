@@ -1,5 +1,5 @@
 const functions = require('firebase-functions');
-const mailgun = require('mailgun-js')({apiKey: 'ENTER YOUR KEY', domain: 'mg.test.com'});
+const sgMail = require('@sendgrid/mail');
 
 exports.sendWelcomeEmail = functions.database.ref('signups/{uid}').onWrite(event => {
   if (!event.data.exists() || event.data.previous.exists()) {
@@ -7,14 +7,13 @@ exports.sendWelcomeEmail = functions.database.ref('signups/{uid}').onWrite(event
   }
   var userEmail = event.data.val().email;
   console.log(userEmail);
-  var data = {
+  sgMail.setApiKey('ENTER YOUR KEY');
+  const msg = {
+    to: userEmail,
     from: 'Smoke Tests <smoke@test.com>',
     subject: 'Thanks for registering',
+    text: 'Welcome to the future! Smoke tests will be launching soon so we will let you know as soon as you can signup. Many thanks, Smoke Tests Team',
     html: '<p>Welcome to the future!</p><p>Smoke tests will be launching soon so we will let you know as soon as you can signup.</p><p>Many thanks</p><p><strong>Smoke Tests Team</strong></p>',
-    'h:Reply-To': 'smoke@test.com',
-    to: userEmail
-  }
-  mailgun.messages().send(data, function (error, body) {
-    console.log(body);
-  });
+  };
+  sgMail.send(msg);
 });
